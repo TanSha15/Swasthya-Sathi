@@ -12,7 +12,7 @@ import aiRoutes from './routes/aiRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 
 dotenv.config();
-connectDB();
+await connectDB();
 
 const app = express();
 
