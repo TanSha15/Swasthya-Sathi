@@ -16,13 +16,18 @@ export const bookAppointment = async (req, res) => {
             return res.status(404).json({ message: 'Doctor profile not found' });
         }
 
-        // 2. Create the appointment
+        // 2. Create the appointment (Auto-confirming and generating link)
+        const secureRoomId = crypto.randomBytes(5).toString('hex');
+        const meetingLink = `https://meet.jit.si/SwasthyaSathi-${secureRoomId}`;
+
         const appointment = await Appointment.create({
             patientId: req.user._id, // Pulled securely from the JWT token
             doctorId,
             date,
             timeSlot,
-            reasonForVisit
+            reasonForVisit,
+            status: 'confirmed',
+            meetingLink
         });
 
         res.status(201).json({

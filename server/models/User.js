@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
         password: { type: String, required: true },
         role: {
             type: String,
-            enum: ['patient', 'doctor', 'admin'],
+            enum: ['patient', 'doctor'],
             default: 'patient',
         },
         avatar: { type: String },
@@ -24,14 +24,13 @@ const userSchema = new mongoose.Schema(
 );
 
 
-userSchema.pre('save', async function (next) {
+userSchema.pre('save', async function () {
     // Only hash the password if it has been modified
     if (!this.isModified('password')) {
-        return next();
+        return;
     }
     const salt = await bcrypt.genSalt(12); 
     this.password = await bcrypt.hash(this.password, salt);
-    next();
 });
 
 // custom method to compare passwords

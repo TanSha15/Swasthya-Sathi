@@ -9,6 +9,10 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import AiChecker from './pages/AiChecker';
+import Doctors from './pages/Doctors';
+import Telehealth from './pages/Telehealth';
+import Register from './pages/Register';
+import DoctorDashboard from './pages/DoctorDashboard';
 
 const App = () => {
   return (
@@ -23,6 +27,10 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/ai-checker" element={<AiChecker />} />
+        <Route path="/doctors" element={<Doctors />} />
+        <Route path="/telehealth/:id" element={<Telehealth />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
       </Routes>
     </Router>
   );

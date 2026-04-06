@@ -7,7 +7,6 @@ import connectDB from './config/db.js';
 
 import authRoutes from './routes/authRoutes.js';
 import doctorRoutes from './routes/doctorRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 
@@ -24,7 +23,6 @@ app.use(morgan('dev'));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
-app.use('/api/admin', adminRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/appointments', appointmentRoutes);
 

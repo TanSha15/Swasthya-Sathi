@@ -17,9 +17,15 @@ const Login = () => {
     // Call our real Zustand API function
     const success = await loginUser(email, password);
     
-    // If the API call worked, redirect to the dashboard
+    // If the API call worked, route dynamically based on role
     if (success) {
-      navigate('/dashboard');
+      // get latest state snapshot to get the populated user
+      const currentUser = useAuthStore.getState().user;
+      if (currentUser?.role === 'doctor') {
+        navigate('/doctor-dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     }
   };
 

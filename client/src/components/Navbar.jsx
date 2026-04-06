@@ -1,17 +1,24 @@
-// src/components/Navbar.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import useAuthStore from '../store/authStore'; // <-- Import your new store!
+import useAuthStore from '../store/authStore';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Pull exactly what we need from Zustand
-  const { isAuthenticated, logout } = useAuthStore(); 
+  const { isAuthenticated, logout, user } = useAuthStore(); 
 
   const handleLogout = () => {
     logout(); // Call the Zustand logout action
+    setIsMobileMenuOpen(false);
     navigate('/'); // Send them back to the home page
+  };
+
+  // Helper to standardise clicking links in mobile view
+  const handleMobileNav = (path) => {
+    navigate(path);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -28,20 +35,32 @@ const Navbar = () => {
             </span>
           </div>
 
+          {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-textLight hover:text-primary font-medium transition-colors">Home</Link>
-            <Link to="/ai-checker" className="text-textLight hover:text-primary font-medium transition-colors">AI Checker</Link>
             
-            {isAuthenticated ? (
+            {user?.role === 'doctor' ? (
               <>
-                <Link to="/dashboard" className="text-textLight hover:text-primary font-medium transition-colors">Dashboard</Link>
-                <button 
-                  onClick={handleLogout}
-                  className="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-medium transition-colors"
-                >
-                  Logout
-                </button>
+                <Link to="/doctor-dashboard" className="text-textLight hover:text-primary font-medium transition-colors">My Patients</Link>
+                <Link to="/ai-checker" className="text-textLight hover:text-primary font-medium transition-colors">AI Checker</Link>
               </>
+            ) : (
+              <>
+                <Link to="/doctors" className="text-textLight hover:text-primary font-medium transition-colors">Find Doctors</Link>
+                <Link to="/ai-checker" className="text-textLight hover:text-primary font-medium transition-colors">AI Checker</Link>
+                {isAuthenticated && (
+                  <Link to="/dashboard" className="text-textLight hover:text-primary font-medium transition-colors">Dashboard</Link>
+                )}
+              </>
+            )}
+
+            {isAuthenticated ? (
+              <button 
+                onClick={handleLogout}
+                className="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg font-medium transition-colors"
+              >
+                Logout
+              </button>
             ) : (
               <div className="flex space-x-4">
                 <Link to="/login" className="text-primary font-semibold hover:text-primaryDark px-4 py-2 transition-colors">
@@ -53,11 +72,63 @@ const Navbar = () => {
               </div>
             )}
           </div>
+          
+          {/* Mobile Menu Toggle Button */}
+          <div className="md:hidden flex items-center">
+             <button 
+               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+               className="text-textDark hover:text-primary transition-colors p-2"
+             >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   {isMobileMenuOpen 
+                     ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                     : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                   }
+                </svg>
+             </button>
+          </div>
 
         </div>
       </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 flex flex-col shadow-soft absolute w-full left-0 z-40">
+          <div className="px-4 pt-2 pb-6 flex flex-col space-y-4">
+             <button onClick={() => handleMobileNav('/')} className="text-left text-textDark font-medium py-2 border-b border-gray-50">Home</button>
+             
+             {user?.role === 'doctor' ? (
+              <>
+                <button onClick={() => handleMobileNav('/doctor-dashboard')} className="text-left text-textDark font-medium py-2 border-b border-gray-50">My Patients</button>
+                <button onClick={() => handleMobileNav('/ai-checker')} className="text-left text-textDark font-medium py-2 border-b border-gray-50">AI Checker</button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => handleMobileNav('/doctors')} className="text-left text-textDark font-medium py-2 border-b border-gray-50">Find Doctors</button>
+                <button onClick={() => handleMobileNav('/ai-checker')} className="text-left text-textDark font-medium py-2 border-b border-gray-50">AI Checker</button>
+                {isAuthenticated && (
+                  <button onClick={() => handleMobileNav('/dashboard')} className="text-left text-textDark font-medium py-2 border-b border-gray-50">Dashboard</button>
+                )}
+              </>
+            )}
+
+            {isAuthenticated ? (
+              <button 
+                onClick={handleLogout}
+                className="text-left font-bold text-red-600 py-2 mt-2"
+              >
+                Logout
+              </button>
+            ) : (
+              <div className="flex flex-col space-y-3 mt-4">
+                <button onClick={() => handleMobileNav('/login')} className="w-full text-center text-primary border border-primary/20 py-3 rounded-xl font-bold bg-blue-50">Login</button>
+                <button onClick={() => handleMobileNav('/register')} className="w-full text-center bg-primary text-white py-3 rounded-xl font-bold">Sign Up</button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
-
 export default Navbar;
