@@ -48,7 +48,9 @@ const Register = () => {
       };
 
       const response = await api.post('/auth/register', registerPayload);
-      const { user, token } = response.data;
+      // The API returns the user properties directly on the response data
+      const userData = response.data; 
+      const token = userData.token;
       
       // 2. If Doctor, upload the Doctor Profile data separately using the new token
       if (role === 'doctor') {
@@ -71,10 +73,11 @@ const Register = () => {
 
       // 3. Log the user in
       if (login) {
-          login(user, token);
+          login(userData, token);
       } else {
           localStorage.setItem('token', token);
-          useAuthStore.setState({ user, isAuthenticated: true });
+          localStorage.setItem('user', JSON.stringify(userData));
+          useAuthStore.setState({ user: userData, isAuthenticated: true, token });
       }
 
       toast.success('Account created successfully!');

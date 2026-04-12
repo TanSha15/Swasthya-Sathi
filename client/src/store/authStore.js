@@ -3,8 +3,17 @@ import { create } from 'zustand';
 import api from '../lib/axios';
 import { toast } from 'react-toastify';
 
+const getUserFromStorage = () => {
+  try {
+    const item = localStorage.getItem('user');
+    return item && item !== 'undefined' ? JSON.parse(item) : null;
+  } catch (error) {
+    return null;
+  }
+};
+
 const useAuthStore = create((set) => ({
-  user: null,
+  user: getUserFromStorage(),
   token: localStorage.getItem('token') || null,
   isAuthenticated: !!localStorage.getItem('token'),
   isLoading: false,
@@ -19,6 +28,7 @@ const useAuthStore = create((set) => ({
       const userData = response.data; // This contains { _id, name, email, role, token }
       
       localStorage.setItem('token', userData.token); 
+      localStorage.setItem('user', JSON.stringify(userData)); 
       
       set({ 
         user: userData, 
@@ -39,6 +49,7 @@ const useAuthStore = create((set) => ({
 
   logout: () => {
     localStorage.removeItem('token'); 
+    localStorage.removeItem('user'); 
     set({ user: null, token: null, isAuthenticated: false });
     toast.info('You have been logged out.');
   },

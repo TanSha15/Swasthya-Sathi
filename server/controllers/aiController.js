@@ -1,5 +1,6 @@
 // controllers/aiController.js
 import ai from '../config/gemini.js';
+import AIAssessment from '../models/AIAssessment.js';
 
 // @desc    Analyze symptoms using Google Gemini
 // @route   POST /api/ai/analyze
@@ -103,6 +104,16 @@ Emergency → Potentially life-threatening symptoms detected.
         const cleanJsonString = text.substring(jsonStartIndex, jsonEndIndex + 1);
         const assessment = JSON.parse(cleanJsonString);
 
+        // Save successfully parsed assessment to DB if user is identified
+        if (req.user && req.user._id) {
+             const newHistory = await AIAssessment.create({
+                 userId: req.user._id,
+                 symptoms: symptoms,
+                 assessmentRaw: assessment
+             });
+             assessment._id = newHistory._id;
+        }
+
         res.status(200).json({
             message: 'Symptoms analyzed successfully',
             assessment
@@ -111,5 +122,22 @@ Emergency → Potentially life-threatening symptoms detected.
     } catch (error) {
         console.error('Gemini API Error Details:', error);
         res.status(500).json({ message: 'Failed to analyze symptoms. Please try again later.' });
+    }
+};
+
+// @desc    Get current user's AI Assessment history
+// @route   GET /api/ai/history
+// @access  Private (Patients)
+export const getAiHistory = async (req, res) => {
+    try {
+        const history = await AIAssessment.find({ userId: req.user._id })
+            .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            count: history.length,
+            history
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };

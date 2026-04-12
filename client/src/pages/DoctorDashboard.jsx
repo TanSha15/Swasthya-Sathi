@@ -1,12 +1,13 @@
 // src/pages/DoctorDashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import useAuthStore from '../store/authStore';
 import { toast } from 'react-toastify';
 
 const DoctorDashboard = () => {
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,8 +23,10 @@ const DoctorDashboard = () => {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) return navigate('/login');
+    if (user?.role === 'patient') return navigate('/dashboard');
     fetchSchedule();
-  }, []);
+  }, [isAuthenticated, user?.role, navigate]);
 
   const handleMarkAttended = async (id) => {
     const notes = window.prompt("Enter prescription or consultation notes for the patient:");
@@ -35,6 +38,17 @@ const DoctorDashboard = () => {
       fetchSchedule(); // Refresh the list
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to update appointment");
+    }
+  };
+
+  const handleCancel = async (id) => {
+    if (!window.confirm("Are you sure you want to cancel this appointment?")) return;
+    try {
+      await api.put(`/appointments/${id}/status`, { status: 'cancelled' });
+      toast.success("Appointment cancelled successfully.");
+      fetchSchedule();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to cancel appointment");
     }
   };
 
@@ -100,7 +114,7 @@ const DoctorDashboard = () => {
                 </div>
 
                 {/* Telehealth & Action Buttons */}
-                {apt.status !== 'completed' ? (
+                {apt.status === 'confirmed' ? (
                   <div className="flex flex-col gap-3 relative z-10">
                     <Link 
                       to={`/telehealth/${apt._id}`}
@@ -114,10 +128,16 @@ const DoctorDashboard = () => {
                     >
                       Mark as Attended ✓
                     </button>
+                    <button
+                      onClick={() => handleCancel(apt._id)}
+                      className="block w-full text-center bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 py-3 rounded-xl font-bold transition-all shadow-sm transform hover:-translate-y-0.5"
+                    >
+                      Cancel Appointment ✖
+                    </button>
                   </div>
                 ) : (
-                  <div className="w-full text-center bg-gray-100 text-gray-500 py-3 rounded-xl font-bold border border-gray-200">
-                    Completed
+                  <div className={`w-full text-center py-3 rounded-xl font-bold border ${apt.status === 'cancelled' ? 'bg-red-50 text-red-500 border-red-100' : 'bg-gray-100 text-gray-500 border-gray-200'}`}>
+                    {apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}
                   </div>
                 )}
 

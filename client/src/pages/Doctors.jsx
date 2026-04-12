@@ -2,16 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import api from '../lib/axios';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Doctors = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialSpecialty = searchParams.get('specialty') || 'All';
+
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   
   // Filtering states
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSpecialty, setSelectedSpecialty] = useState('All');
+  const [selectedSpecialty, setSelectedSpecialty] = useState(initialSpecialty);
 
   // --- NEW: Booking Modal States ---
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -22,7 +26,10 @@ const Doctors = () => {
     reasonForVisit: ''
   });
 
-  const specialties = ['All', 'Cardiologist', 'Dermatologist', 'General Physician', 'Neurologist', 'Pediatrician', 'Psychiatrist'];
+  const baseSpecialties = ['All', 'Cardiologist', 'Dermatologist', 'General Physician', 'Neurologist', 'Pediatrician', 'Psychiatrist'];
+  const specialties = baseSpecialties.includes(initialSpecialty) 
+    ? baseSpecialties 
+    : [...baseSpecialties, initialSpecialty];
 
   useEffect(() => {
     const fetchDoctors = async () => {
