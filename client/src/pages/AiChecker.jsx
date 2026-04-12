@@ -41,7 +41,12 @@ const AiChecker = () => {
       setAnalysis(response.data.assessment);
       fetchHistory(); // Refresh history automatically
     } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong connecting to the AI.');
+      const errorMsg = err.response?.data?.message || 'Something went wrong connecting to the AI.';
+      if (err.response?.status === 401 || errorMsg.toLowerCase().includes('not authorized') || errorMsg.toLowerCase().includes('no token')) {
+        setError('UNAUTHORIZED');
+      } else {
+        setError(errorMsg);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -144,11 +149,26 @@ const AiChecker = () => {
           </div>
 
           {/* Error Message */}
-          {error && (
+          {error === 'UNAUTHORIZED' ? (
+            <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-amber-500 text-lg">🔒</span>
+                <p className="text-amber-800 font-medium">
+                  You need to sign in to use this feature.
+                </p>
+              </div>
+              <button 
+                onClick={() => navigate('/login')}
+                className="whitespace-nowrap bg-amber-100 hover:bg-amber-200 text-amber-900 font-semibold py-2 px-4 rounded-lg transition-colors border border-amber-200 shadow-sm"
+              >
+                Go to Login
+              </button>
+            </div>
+          ) : error ? (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mb-8">
               <p className="text-red-700 font-medium">{error}</p>
             </div>
-          )}
+          ) : null}
 
           {/* Results Section */}
           {analysis && (
