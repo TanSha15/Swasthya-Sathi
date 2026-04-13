@@ -3,12 +3,16 @@ import React, { useState, useEffect } from 'react';
 import api from '../lib/axios';
 import { toast } from 'react-toastify';
 import { useNavigate, useLocation } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
 
 const Doctors = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const initialSpecialty = searchParams.get('specialty') || 'All';
+
+  const { isAuthenticated } = useAuthStore();
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
 
   const [doctors, setDoctors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -158,9 +162,15 @@ const Doctors = () => {
                     </p>
                   </div>
 
-                  {/* Clicking this now opens the Modal! */}
+                  {/* Clicking this now opens the Modal if authenticated! */}
                   <button 
-                    onClick={() => setSelectedDoctor(doctor)}
+                    onClick={() => {
+                      if (!isAuthenticated) {
+                        setShowAuthPrompt(true);
+                      } else {
+                        setSelectedDoctor(doctor);
+                      }
+                    }}
                     className="w-full bg-secondary hover:bg-emerald-600 text-white py-2.5 rounded-xl font-semibold transition-colors"
                   >
                     Book Appointment
@@ -230,6 +240,36 @@ const Doctors = () => {
                 {isSubmitting ? 'Confirming...' : 'Confirm Appointment'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* --- NEW: THE AUTH PROMPT MODAL --- */}
+      {showAuthPrompt && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in-up">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center relative">
+            <button onClick={() => setShowAuthPrompt(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 font-bold">✕</button>
+            <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+              🔒
+            </div>
+            <h2 className="text-2xl font-bold text-textDark mb-3">Sign In Required</h2>
+            <p className="text-textLight mb-8 text-sm leading-relaxed">
+               For your privacy and security, please log in to your account before booking an appointment.
+            </p>
+            <div className="flex flex-col gap-3">
+               <button 
+                 onClick={() => navigate('/login')}
+                 className="w-full bg-primary hover:bg-primaryDark text-white py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
+               >
+                 Sign In to Book
+               </button>
+               <button 
+                 onClick={() => navigate('/register')}
+                 className="w-full text-primary font-semibold py-2 hover:underline text-sm"
+               >
+                 Don't have an account? Register
+               </button>
+            </div>
           </div>
         </div>
       )}

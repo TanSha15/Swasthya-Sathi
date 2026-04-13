@@ -26,12 +26,12 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           
-          <div className="flex-shrink-0 flex items-center cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mr-2">
-              <span className="text-white font-bold text-xl">+</span>
+          <div className="flex-shrink-0 flex items-center cursor-pointer group" onClick={() => navigate('/')}>
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center mr-2.5 shadow-md shadow-primary/20 group-hover:shadow-lg transition-all group-hover:-translate-y-0.5 font-black text-white text-2xl">
+              S
             </div>
-            <span className="font-extrabold text-xl text-textDark tracking-tight">
-              Swasthya<span className="text-primary">Sathi</span>
+            <span className="font-extrabold text-2xl text-textDark tracking-tight group-hover:text-primary transition-colors">
+              Swasthya<span className="text-primary group-hover:text-secondary transition-colors">Sathi</span>
             </span>
           </div>
 

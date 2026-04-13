@@ -62,10 +62,10 @@ const AiChecker = () => {
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
         
         {/* Left Side: History Panel */}
-        <div className="w-full lg:w-1/3 order-2 lg:order-1">
-          <div className="bg-white p-6 rounded-2xl shadow-soft h-full max-h-[85vh] overflow-y-auto">
-            <h2 className="text-xl font-bold text-textDark mb-6 flex items-center gap-2">
-              <span className="text-primary">🕒</span> Assessment History
+        <div className="w-full lg:w-[350px] flex-shrink-0 order-2 lg:order-1">
+          <div className="bg-white p-6 rounded-3xl shadow-soft h-full max-h-[85vh] overflow-y-auto custom-scrollbar border border-gray-50">
+            <h2 className="text-xl font-bold text-textDark mb-6 flex items-center gap-3">
+              <span className="text-primary bg-primary/10 w-10 h-10 rounded-xl flex items-center justify-center text-xl">🕒</span> Assessment History
             </h2>
             
             {isHistoryLoading ? (
@@ -73,8 +73,10 @@ const AiChecker = () => {
                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
               </div>
             ) : history.length === 0 ? (
-              <div className="text-center text-gray-400 py-8 text-sm">
-                No past assessments found. Describe your symptoms to generate one.
+              <div className="text-center py-12 flex flex-col items-center">
+                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-3xl mb-4 grayscale opacity-60 shadow-inner">📂</div>
+                <p className="text-gray-400 text-sm font-bold">No history available</p>
+                <p className="text-gray-400 text-xs mt-1 px-4">Your detailed AI assessments will automatically save here.</p>
               </div>
             ) : (
               <div className="space-y-4">
@@ -112,61 +114,77 @@ const AiChecker = () => {
         </div>
 
         {/* Right Side: Main Checker */}
-        <div className="w-full lg:w-2/3 order-1 lg:order-2">
+        <div className="w-full lg:flex-1 order-1 lg:order-2">
           
-          <div className="text-left mb-8">
-            <h1 className="text-4xl font-extrabold text-textDark mb-3">
-              AI Symptom <span className="text-primary">Checker</span>
-            </h1>
-            <p className="text-lg text-textLight max-w-2xl">
-              Describe how you are feeling, and our AI assistant will provide a preliminary analysis securely recorded to your health history.
-            </p>
+          <div className="mb-10">
+             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-primary font-bold text-sm mb-5 shadow-sm">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+                </span>
+                Powered by Advanced AI
+             </div>
+             <h1 className="text-4xl lg:text-5xl font-extrabold text-textDark mb-4 tracking-tight">
+               AI Symptom <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-indigo-600">Checker</span>
+             </h1>
+             <p className="text-textLight text-lg max-w-2xl leading-relaxed">
+               Describe how you are feeling in natural language. Our intelligent system will analyze your symptoms and securely log a preliminary health report.
+             </p>
           </div>
 
           {/* Input Section */}
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-soft mb-8 border border-gray-100">
+          <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-soft mb-8 border border-gray-50 relative">
             <form onSubmit={handleAnalyze}>
-              <label className="block text-sm font-semibold text-textDark mb-2">
-                What are your symptoms today?
-              </label>
+              <div className="flex items-center gap-3 mb-4">
+                 <div className="w-10 h-10 rounded-xl bg-blue-50 text-primary flex items-center justify-center font-bold text-xl shadow-inner border border-blue-100/50">🤖</div>
+                 <label className="block text-xl font-bold text-textDark tracking-tight">
+                   How are you feeling today?
+                 </label>
+              </div>
               <textarea
-                className="w-full p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none mb-4 bg-surface text-textDark"
-                rows="4"
-                placeholder="E.g., I've had a severe headache for two days, feeling slightly dizzy..."
+                className="w-full p-5 border border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary resize-none mb-6 bg-surface/50 text-textDark text-lg transition-all shadow-inner"
+                rows="5"
+                placeholder="E.g., I've had a severe headache for two days, feeling slightly dizzy when I stand up quickly..."
                 value={symptoms}
                 onChange={(e) => setSymptoms(e.target.value)}
                 required
               ></textarea>
               
-              <button 
-                type="submit" 
-                disabled={isLoading || !symptoms.trim()}
-                className="w-full md:w-auto px-8 py-3 bg-primary hover:bg-primaryDark text-white font-bold rounded-xl transition-all disabled:opacity-50 flex items-center justify-center shadow-md"
-              >
-                {isLoading ? 'Analyzing securely...' : 'Analyze Symptoms'}
-              </button>
+              <div className="flex justify-end">
+                 <button 
+                   type="submit" 
+                   disabled={isLoading || !symptoms.trim()}
+                   className="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-primary to-indigo-600 hover:from-primaryDark hover:to-indigo-800 text-white font-extrabold rounded-2xl transition-all disabled:opacity-50 flex items-center justify-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-lg"
+                 >
+                   {isLoading ? 'Analyzing securely...' : 'Analyze Symptoms'}
+                 </button>
+              </div>
             </form>
           </div>
 
           {/* Error Message */}
           {error === 'UNAUTHORIZED' ? (
-            <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <span className="text-amber-500 text-lg">🔒</span>
-                <p className="text-amber-800 font-medium">
-                  You need to sign in to use this feature.
-                </p>
+            <div className="bg-amber-50 border border-amber-200 p-6 rounded-2xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-fade-in-up">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center text-amber-600 text-2xl shadow-sm border border-amber-200/50">🔒</div>
+                <div>
+                  <h3 className="text-amber-900 font-bold text-lg mb-1">Authentication Required</h3>
+                  <p className="text-amber-800 font-medium text-sm">
+                    You need to securely log in to access the AI Symptom Checker.
+                  </p>
+                </div>
               </div>
               <button 
                 onClick={() => navigate('/login')}
-                className="whitespace-nowrap bg-amber-100 hover:bg-amber-200 text-amber-900 font-semibold py-2 px-4 rounded-lg transition-colors border border-amber-200 shadow-sm"
+                className="w-full sm:w-auto whitespace-nowrap bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
               >
-                Go to Login
+                Sign In
               </button>
             </div>
           ) : error ? (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg mb-8">
-              <p className="text-red-700 font-medium">{error}</p>
+            <div className="bg-red-50 border border-red-200 p-5 rounded-2xl mb-8 flex items-center gap-3 shadow-sm">
+              <span className="text-red-500 text-xl">⚠️</span>
+              <p className="text-red-700 font-bold">{error}</p>
             </div>
           ) : null}
 

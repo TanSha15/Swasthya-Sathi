@@ -97,33 +97,38 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-surface flex items-center justify-center p-6 py-12">
-      <div className="bg-white p-8 rounded-3xl shadow-soft w-full max-w-md animate-fade-in-up mt-8">
-        
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-extrabold text-textDark mb-2">Create Account</h1>
-        </div>
+    <div className="min-h-screen bg-surface flex font-sans h-screen overflow-hidden">
+      
+      {/* Left Form Pane */}
+      <div className="flex-1 flex flex-col p-6 sm:p-12 relative overflow-y-auto custom-scrollbar">
+        <Link to="/" className="absolute top-8 left-8 text-sm font-semibold text-textLight hover:text-primary transition-colors z-10">← Back to Home</Link>
+        <div className="w-full max-w-md mx-auto animate-fade-in-up my-auto pt-12 lg:pt-4 pb-8">
+          
+          <div className="mb-8 text-center lg:text-left">
+            <h1 className="text-4xl font-extrabold text-textDark mb-2">Create Account</h1>
+            <p className="text-textLight text-lg">Join our network of patients and verified specialists.</p>
+          </div>
 
-        <div className="flex bg-gray-100 p-1 rounded-xl mb-8">
-          <button
-            type="button"
-            onClick={() => setRole('patient')}
-            className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${
-              role === 'patient' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            I am a Patient
-          </button>
-          <button
-            type="button"
-            onClick={() => setRole('doctor')}
-            className={`flex-1 py-2 rounded-lg text-sm font-bold transition-all ${
-              role === 'doctor' ? 'bg-white text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            I am a Doctor
-          </button>
-        </div>
+          <div className="flex bg-gray-100 p-1.5 rounded-2xl mb-8 border border-gray-200 shadow-inner">
+            <button
+              type="button"
+              onClick={() => setRole('patient')}
+              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                role === 'patient' ? 'bg-white text-primary shadow-sm scale-[1.02]' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              I am a Patient
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole('doctor')}
+              className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
+                role === 'doctor' ? 'bg-white text-primary shadow-sm scale-[1.02]' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              I am a Doctor
+            </button>
+          </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -189,11 +194,36 @@ const Register = () => {
             </div>
           )}
 
-          <button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primaryDark text-white py-3 rounded-xl font-bold transition-all mt-6 disabled:opacity-50">
+          <button type="submit" disabled={isLoading} className="w-full bg-primary hover:bg-primaryDark text-white py-4 rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-primary/30 hover:-translate-y-1 mt-8 disabled:opacity-50 disabled:transform-none">
             {isLoading ? 'Processing...' : `Sign Up as ${role === 'doctor' ? 'Doctor' : 'Patient'}`}
           </button>
         </form>
+
+        <p className="text-center text-textLight mt-8">
+            Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Sign in securely</Link>
+        </p>
+
+        </div>
       </div>
+
+      {/* Right Visual Pane */}
+      <div className="hidden lg:flex w-5/12 bg-gradient-to-br from-secondary to-teal-800 p-12 flex-col justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-emerald-400/20 blur-[100px] pointer-events-none"></div>
+        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-white/10 blur-[100px] pointer-events-none"></div>
+        
+        <div className="relative z-10 flex flex-col items-center text-center">
+          <div className="flex items-center gap-3 mb-12">
+            <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-secondary shadow-2xl font-black text-3xl">
+              S
+            </div>
+            <span className="text-3xl font-extrabold text-white tracking-tight">Swasthya-Sathi</span>
+          </div>
+          <h1 className="text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-[1.1] tracking-tight">Join the healthcare<br/>revolution.</h1>
+          <p className="text-white/90 text-xl leading-relaxed max-w-md mt-6">Whether you're seeking care or providing it, our platform empowers you with the best tools in modern medicine.</p>
+        </div>
+      </div>
+
     </div>
   );
 };
