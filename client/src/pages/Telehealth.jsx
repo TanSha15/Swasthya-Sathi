@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { io } from 'socket.io-client';
 import useAuthStore from '../store/authStore';
 
-const SERVER_URL = 'http://localhost:5000'; 
+const SERVER_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'; 
 
 const Telehealth = () => {
   const { id: roomId } = useParams();
@@ -84,7 +84,7 @@ const Telehealth = () => {
 
     // 4. Socket Signaling Listeners
     socket.on('user-connected', async (userId) => {
-      console.log('User connected, creating offer...');
+      console.log('User connected, creating offer for:', userId);
       peerConnectionRef.current = createPeerConnection();
       const pc = peerConnectionRef.current;
 

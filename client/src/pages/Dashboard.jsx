@@ -27,7 +27,7 @@ const Dashboard = () => {
     };
 
     fetchAppointments();
-  }, []);
+  }, [isAuthenticated, navigate, user?.role]);
 
   const handleCancel = async (id) => {
     if (!window.confirm("Are you sure you want to cancel this appointment?")) return;
