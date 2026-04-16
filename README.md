@@ -1,6 +1,6 @@
 # Swasthya Sathi
 
-**Live Project Link:** (https://swasthya-sathi-nt7g.onrender.com/)
+**Live Project Link:** [https://swasthya-sathi-nt7g.onrender.com/](https://swasthya-sathi-nt7g.onrender.com/)
 
 ## 1. Project Overview
 
