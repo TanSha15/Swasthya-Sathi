@@ -49,14 +49,14 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
     console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     
-    // Auto-ping to prevent Render sleep mode (14 min intervals)
+    // Ping every 3 hours
     if (process.env.RENDER_EXTERNAL_URL) {
       setInterval(() => {
         https.get(`${process.env.RENDER_EXTERNAL_URL}/api/health`, (res) => {
-           console.log(`Keep-alive ping sent. Status: ${res.statusCode}`);
+           console.log(`Ping sent. Status: ${res.statusCode}`);
         }).on('error', (e) => {
-           console.error(`Keep-alive ping failed: ${e.message}`);
+           console.error(`Ping failed: ${e.message}`);
         });
-      }, 14 * 60 * 1000);
+      }, 6 * 60 * 60 * 1000);
     }
 });
